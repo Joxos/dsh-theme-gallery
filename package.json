@@ -1,6 +1,6 @@
 {
   "name": "@joxos/dsh-theme-gallery",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DeepSeek Harness bundle that adds a sidebar visual-style gallery with Pixel Arcade and Aurora Whispers themes.",
   "keywords": [
     "dsh",
