@@ -5,6 +5,10 @@ node_modules/
 .tmp/
 coverage/
 *.log
+*.tgz
+
+# Local npm credentials/configuration
+.npmrc
 
 # Editor and OS noise
 .DS_Store

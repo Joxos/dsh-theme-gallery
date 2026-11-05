@@ -4,6 +4,14 @@
   "private": true,
   "type": "module",
   "description": "Sidebar entry that switches the whole Harness UI between two visual styles: Pixel Arcade and Aurora Whispers.",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "cordis",
+    "plugin",
+    "theme",
+    "sidebar"
+  ],
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -16,10 +24,26 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
-    "README.md"
+    "README.md",
+    "PUBLISHING.md"
   ],
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/smoke-test.mjs",
+    "prepack": "node scripts/build-client.mjs && node scripts/check.mjs && node scripts/smoke-test.mjs",
+    "prepublishOnly": "node scripts/check-publish.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "platform": "web",
       "immediately": true,

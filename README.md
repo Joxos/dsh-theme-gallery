@@ -3,7 +3,7 @@
 A DeepSeek Harness bundle that adds a **Visual style** entry to the left sidebar
 and opens a page where the whole application can be re-skinned.
 
-Two styles, each with a light and a dark palette that follows the host's
+Two styles, each with a light and a dark palette that follow the host's
 color-scheme preference:
 
 | id | 中文 | English | Signature |
@@ -50,19 +50,64 @@ removed with the style layer.
 * **Entry point** — `sidebar.panellist` id `style-gallery` plus the `main`
   panel registered under the same key (the host sidebar owns the button and
   selects the panel).
+* **One browser artifact** — the DSH module loader serves each plugin as a
+  self-contained bundle and cannot follow relative imports from `client.js`.
+  The readable sources therefore live in `src/client`, and `esbuild` emits the
+  single `client.js` the Host serves. The generated artifact is committed so a
+  checkout stays installable without a build step.
+
+## Development
+
+Requirements: Node.js 18+ and pnpm.
+
+```bash
+pnpm install
+pnpm build   # src/client -> client.js
+pnpm check   # manifest, patch name, locale, icon, built artifact
+pnpm test    # VM smoke test: slots, restore, token layer, disposal
+```
+
+Edit `src/client`, never the generated `client.js`. `pnpm build` also injects
+the package name as the browser module id, so a rename cannot leave the bundle
+registered under a stale name.
+
+```text
+src/client/
+├─ index.js          module-loader entry (registers the lazy factory)
+├─ plugin.js         locale, theme layer, stylesheet and slot registration
+├─ constants.js      namespace, panel id, storage key, effect style
+├─ runtime.js        React bridge for the lazy factory
+├─ selection.js      selected id, persistence and subscriptions
+├─ useActiveStyle.js React hook shared by the page and the overlay
+├─ components/       sidebar glyph, preview, gallery page, aurora overlay
+├─ dictionaries/     English and Chinese copy
+├─ presets/
+│  ├─ pixel/         tokens.js + style.css
+│  └─ cyber/         tokens.js + style.css
+└─ styles/page.css   gallery page chrome
+```
 
 ## Install
 
-From a Harness session with Full access, install the directory through the
-Plugin Manager (`install_bundle` with this folder). The Host row only exists so
-the bundle is a normal profile entry; all behavior is in `client.js`.
+Local checkout: install the folder through the Plugin Manager (`install_bundle`
+with this directory). The Host row only exists so the bundle is a normal profile
+entry; all behavior is in the browser half.
+
+After publishing, install the package by name (`dsh plugin add <package>` or
+Plugin Manager → Add plugin). See [PUBLISHING.md](PUBLISHING.md) for the npm
+release checklist, including the package rename a public release requires.
 
 ## Files
 
-| File | Purpose |
+| Path | Purpose |
 | --- | --- |
 | `index.js` | Host half (empty `apply`), required by the patch row |
-| `client.js` | Sidebar entry, page UI, theme layers, stylesheet |
+| `src/client/**` | Browser source modules |
+| `client.js` | Generated browser artifact served by the Host |
+| `scripts/build-client.mjs` | Bundles `src/client` into `client.js` |
+| `scripts/check.mjs` | Validates the manifest, patch row, locales, icon and artifact |
+| `scripts/smoke-test.mjs` | Exercises the built bundle in a VM harness |
 | `cordis.patch.yml` | Inserts the `dsh-style-gallery` row |
-| `locale/{zh,en}.json` | Plugin Manager title/description |
+| `locale/{en,zh}.json` | Plugin Manager title/description |
 | `icon.svg` | Plugin artwork (palette glyph) |
+| `PUBLISHING.md` | npm publishing guide (Chinese) |

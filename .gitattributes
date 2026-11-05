@@ -1,5 +1,8 @@
 * text=auto eol=lf
 
+# Generated browser artifact; edit src/client and rebuild instead.
+client.js linguist-generated=true
+
 *.png binary
 *.jpg binary
 *.jpeg binary
