@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build and test scratch space
+.tmp/
+coverage/
+*.log
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db

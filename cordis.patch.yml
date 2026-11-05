@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-style-gallery
+      name: '@local/dsh-style-gallery'
