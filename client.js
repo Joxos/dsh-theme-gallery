@@ -1,9 +1,9 @@
-/*! @local/dsh-style-gallery v1.0.0 | generated from src/client by scripts/build-client.mjs - edit the sources, not this file. */
+/*! @joxos/dsh-theme-gallery v1.0.0 | generated from src/client by scripts/build-client.mjs - edit the sources, not this file. */
 (() => {
   // src/client/constants.js
   var NS = "styleGallery";
   var PANEL_ID = "style-gallery";
-  var PACKAGE_ID = "@local/dsh-style-gallery";
+  var PACKAGE_ID = "@joxos/dsh-theme-gallery";
   var SOURCE = PACKAGE_ID;
   var STORAGE_KEY = "dsh.style-gallery.active";
   var NATIVE_ID = "native";

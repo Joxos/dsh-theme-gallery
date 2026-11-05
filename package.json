@@ -1,17 +1,27 @@
 {
-  "name": "@local/dsh-style-gallery",
+  "name": "@joxos/dsh-theme-gallery",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "description": "Sidebar entry that switches the whole Harness UI between two visual styles: Pixel Arcade and Aurora Whispers.",
+  "description": "DeepSeek Harness bundle that adds a sidebar visual-style gallery with Pixel Arcade and Aurora Whispers themes.",
   "keywords": [
     "dsh",
     "deepseek-harness",
     "cordis",
     "plugin",
     "theme",
+    "visual-style",
     "sidebar"
   ],
+  "license": "MIT",
+  "author": "Joxos <xujunhao61@163.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joxos/dsh-theme-gallery.git"
+  },
+  "homepage": "https://github.com/Joxos/dsh-theme-gallery#readme",
+  "bugs": {
+    "url": "https://github.com/Joxos/dsh-theme-gallery/issues"
+  },
+  "type": "module",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -24,6 +34,7 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
+    "LICENSE",
     "README.md",
     "PUBLISHING.md"
   ],

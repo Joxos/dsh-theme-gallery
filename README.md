@@ -1,4 +1,4 @@
-# Style Gallery (`@local/dsh-style-gallery`)
+# DSH Theme Gallery (`@joxos/dsh-theme-gallery`)
 
 A DeepSeek Harness bundle that adds a **Visual style** entry to the left sidebar
 and opens a page where the whole application can be re-skinned.
@@ -93,9 +93,22 @@ Local checkout: install the folder through the Plugin Manager (`install_bundle`
 with this directory). The Host row only exists so the bundle is a normal profile
 entry; all behavior is in the browser half.
 
-After publishing, install the package by name (`dsh plugin add <package>` or
-Plugin Manager → Add plugin). See [PUBLISHING.md](PUBLISHING.md) for the npm
-release checklist, including the package rename a public release requires.
+From npm:
+
+```powershell
+dsh plugin add @joxos/dsh-theme-gallery
+```
+
+Or use Plugin Manager → Add plugin and enter the package name. See
+[PUBLISHING.md](PUBLISHING.md) for the release and CI checklist.
+
+## Publishing
+
+The package is published as `@joxos/dsh-theme-gallery`. The GitHub Actions
+workflow at [`.github/workflows/publish.yml`](.github/workflows/publish.yml)
+publishes a new version on a `v*` tag or a manual workflow run. It needs an
+`NPM_TOKEN` repository secret; setup, 2FA and post-publish verification are in
+[PUBLISHING.md](PUBLISHING.md).
 
 ## Files
 
@@ -106,8 +119,15 @@ release checklist, including the package rename a public release requires.
 | `client.js` | Generated browser artifact served by the Host |
 | `scripts/build-client.mjs` | Bundles `src/client` into `client.js` |
 | `scripts/check.mjs` | Validates the manifest, patch row, locales, icon and artifact |
+| `scripts/check-publish.mjs` | Rejects `private` and `@local` before publishing |
 | `scripts/smoke-test.mjs` | Exercises the built bundle in a VM harness |
-| `cordis.patch.yml` | Inserts the `dsh-style-gallery` row |
+| `cordis.patch.yml` | Inserts the `dsh-theme-gallery` row |
 | `locale/{en,zh}.json` | Plugin Manager title/description |
 | `icon.svg` | Plugin artwork (palette glyph) |
+| `.github/workflows/publish.yml` | Tag/manual npm publish workflow |
 | `PUBLISHING.md` | npm publishing guide (Chinese) |
+| `LICENSE` | MIT license |
+
+## License
+
+MIT © 2026 Joxos. See [LICENSE](LICENSE).

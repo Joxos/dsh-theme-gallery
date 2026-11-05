@@ -23,7 +23,7 @@ async function exists(rel) {
   }
 }
 
-for (const rel of ['index.js', 'client.js', 'cordis.patch.yml', 'locale/en.json', 'locale/zh.json', 'icon.svg']) {
+for (const rel of ['index.js', 'client.js', 'cordis.patch.yml', 'locale/en.json', 'locale/zh.json', 'icon.svg', 'LICENSE']) {
   check(await exists(rel), `missing runtime file: ${rel}`)
 }
 
@@ -32,9 +32,11 @@ for (const key of ['.', './client', './locale/*.json', './icon']) {
 }
 
 const files = new Set(pkg.files ?? [])
-for (const pattern of ['index.js', 'client.js', 'cordis.patch.yml', 'locale/*.json', 'icon.svg']) {
+for (const pattern of ['index.js', 'client.js', 'cordis.patch.yml', 'locale/*.json', 'icon.svg', 'LICENSE']) {
   check(files.has(pattern), `package.json files is missing "${pattern}"`)
 }
+
+check(pkg.license === 'MIT', 'package.json license must be MIT')
 
 check(pkg.dsh?.bundle?.patch === './cordis.patch.yml', 'dsh.bundle.patch must point at ./cordis.patch.yml')
 check(pkg.dsh?.client?.platform === 'web', 'dsh.client.platform must be "web"')
