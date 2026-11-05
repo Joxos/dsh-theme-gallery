@@ -35,8 +35,7 @@
     "locale/*.json",
     "icon.svg",
     "LICENSE",
-    "README.md",
-    "PUBLISHING.md"
+    "README.md"
   ],
   "scripts": {
     "build": "node scripts/build-client.mjs",

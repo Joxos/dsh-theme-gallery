@@ -99,16 +99,14 @@ From npm:
 dsh plugin add @joxos/dsh-theme-gallery
 ```
 
-Or use Plugin Manager → Add plugin and enter the package name. See
-[PUBLISHING.md](PUBLISHING.md) for the release and CI checklist.
+Or use Plugin Manager → Add plugin and enter the package name.
 
 ## Publishing
 
 The package is published as `@joxos/dsh-theme-gallery`. The GitHub Actions
 workflow at [`.github/workflows/publish.yml`](.github/workflows/publish.yml)
 publishes a new version on a `v*` tag or a manual workflow run. It needs an
-`NPM_TOKEN` repository secret; setup, 2FA and post-publish verification are in
-[PUBLISHING.md](PUBLISHING.md).
+`NPM_TOKEN` repository secret.
 
 ## Files
 
@@ -125,7 +123,6 @@ publishes a new version on a `v*` tag or a manual workflow run. It needs an
 | `locale/{en,zh}.json` | Plugin Manager title/description |
 | `icon.svg` | Plugin artwork (palette glyph) |
 | `.github/workflows/publish.yml` | Tag/manual npm publish workflow |
-| `PUBLISHING.md` | npm publishing guide (Chinese) |
 | `LICENSE` | MIT license |
 
 ## License
