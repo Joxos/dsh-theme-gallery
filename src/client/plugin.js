@@ -1,5 +1,10 @@
 import baseCss from './styles/page.css'
 import {
+  CYCLE_DEFAULT,
+  CYCLE_KEY,
+  CYCLE_MAX,
+  CYCLE_MIN,
+  CYCLE_STEP,
   EFFECT_STYLE_ID,
   NATIVE_ID,
   NS,
@@ -7,6 +12,8 @@ import {
   SOURCE,
   STORAGE_KEY,
 } from './constants.js'
+import { createCycleStore } from './cycle.js'
+import { mountAuroraStack, mountGelLayer } from './effects/ambient.js'
 import { createGalleryPage } from './components/GalleryPage.js'
 import { GalleryIcon } from './components/GalleryIcon.js'
 import { createStyleFx } from './components/StyleFx.js'
@@ -24,10 +31,38 @@ export function createPlugin() {
       const locale = ctx.locale
       const translator = locale.bind(NS)
       const selection = createSelectionStore({ storageKey: STORAGE_KEY, nativeId: NATIVE_ID, styles: STYLES })
+      const cycle = createCycleStore({
+        storageKey: CYCLE_KEY,
+        min: CYCLE_MIN,
+        max: CYCLE_MAX,
+        step: CYCLE_STEP,
+        fallback: CYCLE_DEFAULT,
+      })
       const useActiveStyle = createUseActiveStyle(selection)
 
       let tokenDispose = null
       let styleTag = null
+      let aurora = null
+
+      /**
+       * The aurora background is a fixed layer stack of its own instead of the
+       * page-body background: an animated `background-position` repaints the
+       * window every frame, while translated layers stay on the compositor.
+       * Each layer is a small baked canvas that IS its compositor texture
+       * (see `effects/ambient.js`), and the gel overlay — formerly the
+       * `body::after` pseudo-element — mounts beside the stack.
+       */
+      function mountAurora() {
+        if (aurora !== null) return
+        aurora = { stack: mountAuroraStack(), gel: mountGelLayer() }
+      }
+
+      function unmountAurora() {
+        if (aurora === null) return
+        aurora.gel.dispose()
+        aurora.stack.dispose()
+        aurora = null
+      }
 
       /** Color token layer + structural rules for one style id ('native' clears both). */
       function commit(id) {
@@ -40,14 +75,26 @@ export function createPlugin() {
         } else {
           tokenDispose = theme.overrideTokens(SOURCE, spec.tokens)
         }
+        // Install the structural rules before mounting: the ambient canvases
+        // size their backing stores from the geometry those rules define.
         if (styleTag !== null) {
           styleTag.textContent = baseCss + (spec === undefined ? '' : '\n' + spec.structural)
         }
+        if (spec !== undefined && spec.id === EFFECT_STYLE_ID) mountAurora()
+        else unmountAurora()
         selection.setActive(spec === undefined ? NATIVE_ID : spec.id)
         selection.emit()
       }
 
       ctx.effect(() => locale.register(NS, DICTIONARIES), 'style gallery: dictionaries')
+
+      ctx.effect(() => {
+        cycle.set(cycle.readSaved(), { persist: false })
+        return () => {
+          cycle.clearListeners()
+          cycle.clear()
+        }
+      }, 'style gallery: motion cycle')
 
       ctx.effect(() => {
         const tag = document.createElement('style')
@@ -62,6 +109,7 @@ export function createPlugin() {
             tokenDispose = null
           }
           selection.setActive(NATIVE_ID, { persist: false })
+          unmountAurora()
           styleTag = null
           tag.remove()
           selection.clearListeners()
@@ -74,6 +122,7 @@ export function createPlugin() {
         translator,
         useActiveStyle,
         onSelect: commit,
+        cycleStore: cycle,
       })
       const StyleFx = createStyleFx({ useActiveStyle, effectStyleId: EFFECT_STYLE_ID })
 

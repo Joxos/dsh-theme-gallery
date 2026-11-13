@@ -1,13 +1,15 @@
 name: publish
 
+# Single release path: publishing a GitHub Release builds that tag and pushes
+# the same version to npm. A bare branch push never publishes.
 on:
-  push:
-    tags: ['v*']
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write # required for the npm provenance attestation
 
 concurrency:
   group: npm-publish
@@ -34,20 +36,73 @@ jobs:
       - run: pnpm check
       - run: pnpm test
 
-      - name: Check whether this version is already on npm
-        id: published
+      - name: Resolve version and check the registry
+        id: meta
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
-          NAME="$(node -p "require('./package.json').name")"
-          VERSION="$(node -p "require('./package.json').version")"
-          if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "${NAME}@${VERSION} is already published; skipping npm publish."
+          set -euo pipefail
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # The release tag is the version boundary: v1.2.3 must carry 1.2.3.
+          if [ -n "$RELEASE_TAG" ] && [ "$RELEASE_TAG" != "v$VERSION" ]; then
+            echo "::error::release tag '$RELEASE_TAG' does not match package.json version 'v$VERSION'"
+            exit 1
+          fi
+
+          # A pre-release never takes over the latest dist-tag.
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "dist_tag=next" >> "$GITHUB_OUTPUT"
           else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "dist_tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Re-running a release is safe: an already published version is a no-op.
+          if ! STATUS=$(curl -sS -o /dev/null -w '%{http_code}' "https://registry.npmjs.org/$NAME/$VERSION"); then
+            echo "::error::could not query the npm registry"
+            exit 1
+          fi
+          case "$STATUS" in
+            200) echo "skip=true" >> "$GITHUB_OUTPUT" ;;
+            404) echo "skip=false" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::unexpected npm registry status $STATUS for $NAME@$VERSION"
+              exit 1
+              ;;
+          esac
+
+      - name: Ensure NPM_TOKEN is configured
+        if: steps.meta.outputs.skip != 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::repository secret NPM_TOKEN is missing; add it in Settings > Secrets and variables > Actions"
+            exit 1
           fi
 
       - name: Publish to npm
-        if: steps.published.outputs.skip != 'true'
-        run: npm publish --access public --provenance
+        if: steps.meta.outputs.skip != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance --tag "${{ steps.meta.outputs.dist_tag }}"
+
+      - name: Summary
+        if: always() && steps.meta.outputs.version != ''
+        run: |
+          NAME='${{ steps.meta.outputs.name }}'
+          VERSION='${{ steps.meta.outputs.version }}'
+          SKIP='${{ steps.meta.outputs.skip }}'
+          {
+            echo "### npm publish"
+            echo ""
+            if [ "$SKIP" = "true" ]; then
+              echo "\`$NAME@$VERSION\` was already on npm; nothing published."
+            else
+              echo "Published \`$NAME@$VERSION\` with provenance."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

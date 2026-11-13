@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>dsh-theme-gallery ambient bench</title>
+  <link rel="stylesheet" href="shell.css" />
+  <link rel="stylesheet" href="/theme/cyber.css" />
+  <link rel="stylesheet" href="/theme/page.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sideRow on"></div>
+      <div class="sideRow"></div>
+      <div class="sideRow"></div>
+      <div class="sideRow"></div>
+      <div class="sideRow"></div>
+      <div class="sideRow"></div>
+    </aside>
+    <div id="main">
+      <header id="top"><div class="title">ambient bench</div></header>
+      <section id="chat"></section>
+      <footer id="composer">composer surface</footer>
+    </div>
+    <div id="menu" hidden>
+      <div class="menuRow"></div>
+      <div class="menuRow"></div>
+      <div class="menuRow"></div>
+    </div>
+  </div>
+  <div id="fxmount"></div>
+  <script type="module">
+    import { mountVariant } from './variants.js'
+    import { runWorkload } from './workloads.js'
+    import { createFrameProbe, diffPng, textureBytes } from './measure.js'
+
+    let handle = null
+    let probe = null
+
+    window.__bench = {
+      variants: null,
+      async boot() {
+        const params = new URLSearchParams(location.search)
+        const theme = params.get('theme') === 'dark' ? 'dark' : 'light'
+        if (theme === 'dark') document.body.setAttribute('data-ds-dark-theme', '')
+        const chat = document.getElementById('chat')
+        for (let i = 0; i < 24; i++) {
+          const node = document.createElement('article')
+          node.className = `msg ${i % 2 === 0 ? 'msgUser' : 'msgBot'}`
+          node.innerHTML = `<div class="msgHead">${i % 2 === 0 ? 'user' : 'assistant'}</div><p>${'ambient bench filler text '.repeat(6)}</p>`
+          chat.append(node)
+        }
+        return { theme, dpr: window.devicePixelRatio, w: window.innerWidth, h: window.innerHeight }
+      },
+      mount(id) {
+        handle?.destroy()
+        handle = mountVariant(id, {
+          theme: document.body.hasAttribute('data-ds-dark-theme') ? 'dark' : 'light',
+        })
+        handle.resume()
+        return { id: handle.id, textures: textureBytes() }
+      },
+      /** Deterministic animation state for screenshots. */
+      seek(tMs) {
+        handle.seek(tMs)
+        return tMs
+      },
+      resume() {
+        handle.resume()
+      },
+      /** Run one workload with a frame-gap probe over it. */
+      async workload(id, durationMs) {
+        handle.resume()
+        probe = createFrameProbe()
+        probe.start()
+        const result = await runWorkload(id, durationMs)
+        result.frames = probe.stop()
+        result.textures = textureBytes()
+        return result
+      },
+      textureBytes,
+      diffPng,
+      ready() {
+        return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      },
+    }
+  </script>
+</body>
+</html>

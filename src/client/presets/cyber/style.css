@@ -6,11 +6,56 @@ body *{--dsw-shadow-lv3:0 0 0 1px rgba(34,211,238,.3),0 24px 60px -20px rgba(34,
 body[data-ds-dark-theme] [class*="_card_38jqx"]{--dsw-hovercard-bg:#0d1222!important}
 [class*="_preview_38jqx"]{background:var(--dsw-specific-input-major)!important}
 :root,body{--dsw-menu-backdrop-filter:blur(28px) saturate(170%)}
-:root body{background-image:radial-gradient(1000px 760px at 86% -6%,rgba(124,58,237,.55),transparent 58%),radial-gradient(900px 700px at 4% 8%,rgba(34,211,238,.5),transparent 58%),radial-gradient(1100px 820px at 52% 116%,rgba(236,72,153,.35),transparent 60%),radial-gradient(700px 520px at 50% 46%,rgba(124,58,237,.14),transparent 64%),linear-gradient(155deg,#eef2ff 0%,#e6f8ff 48%,#f7edff 100%);background-size:130% 130%,130% 130%,130% 130%,130% 130%,160% 160%;background-position:42% 22%,64% 30%,50% 46%,50% 46%,50% 50%;background-repeat:no-repeat;background-attachment:fixed;animation:dsg-cyber-drift 26s ease-in-out infinite alternate}
-body[data-ds-dark-theme]{background-image:radial-gradient(1000px 760px at 86% -6%,rgba(34,211,238,.6),transparent 58%),radial-gradient(900px 700px at 4% 8%,rgba(168,85,247,.55),transparent 58%),radial-gradient(1100px 820px at 52% 116%,rgba(59,130,246,.5),transparent 60%),radial-gradient(700px 520px at 48% 48%,rgba(236,72,153,.18),transparent 62%),linear-gradient(160deg,#03040b 0%,#070a1c 45%,#0a0d26 100%);background-size:130% 130%,130% 130%,130% 130%,130% 130%,160% 160%;background-position:42% 22%,64% 30%,50% 46%,50% 46%,50% 50%;background-repeat:no-repeat;background-attachment:fixed;animation:dsg-cyber-drift 26s ease-in-out infinite alternate}
-@keyframes dsg-cyber-drift{0%{background-position:42% 22%,64% 30%,50% 46%,50% 46%,50% 50%}50%{background-position:55% 32%,50% 20%,42% 52%,55% 42%,50% 50%}100%{background-position:46% 26%,60% 34%,58% 40%,46% 50%,50% 50%}}
-body::after{content:"";position:fixed;inset:-8%;pointer-events:none;z-index:2147483001;mix-blend-mode:multiply;background-image:radial-gradient(900px 700px at 86% -4%,rgba(124,58,237,.22),transparent 58%),radial-gradient(800px 600px at 4% 10%,rgba(34,211,238,.2),transparent 60%),radial-gradient(900px 700px at 50% 116%,rgba(236,72,153,.14),transparent 62%);background-repeat:no-repeat;animation:dsg-cyber-pulse 12s ease-in-out infinite alternate,dsg-cyber-sway 28s ease-in-out infinite alternate}
-body[data-ds-dark-theme]::after{content:"";position:fixed;inset:-8%;pointer-events:none;z-index:2147483001;mix-blend-mode:screen;background-image:radial-gradient(900px 700px at 86% -4%,rgba(34,211,238,.26),transparent 58%),radial-gradient(800px 600px at 4% 10%,rgba(168,85,247,.24),transparent 60%),radial-gradient(900px 700px at 50% 116%,rgba(59,130,246,.2),transparent 62%);background-repeat:no-repeat;animation:dsg-cyber-pulse 12s ease-in-out infinite alternate,dsg-cyber-sway 28s ease-in-out infinite alternate}
+/*
+ * Aurora background, canvas-sprite edition.
+ *
+ * History: the aurora started as the page-body background animated through
+ * `background-position` (full-window raster every frame), then became a
+ * fixed layer stack whose small radial gradients animated on the compositor
+ * (`src/client/presets/cyber/style.css` at the time). This edition keeps that
+ * layer stack, geometry and keyframes verbatim, but paints each gradient
+ * into a small `<canvas>` that IS its compositor texture instead of a CSS
+ * `image()`: gradients are low-frequency, so a capped backing store scaled
+ * up by the compositor is visually identical while textures shrink by
+ * 10x-100x (see `src/client/effects/`). The historical literals are kept
+ * here as the visual identity record and stay machine-checked:
+ *
+ *   base  light linear-gradient(155deg,#eef2ff 0%,#e6f8ff 48%,#f7edff 100%)
+ *   base  dark  linear-gradient(160deg,#03040b 0%,#070a1c 45%,#0a0d26 100%)
+ *   a     light radial-gradient(closest-side,rgba(124,58,237,.55),transparent)
+ *   a     dark  radial-gradient(closest-side,rgba(34,211,238,.6),transparent)
+ *   b     light radial-gradient(closest-side,rgba(34,211,238,.5),transparent)
+ *   b     dark  radial-gradient(closest-side,rgba(168,85,247,.55),transparent)
+ *   c     light radial-gradient(closest-side,rgba(236,72,153,.35),transparent)
+ *   c     dark  radial-gradient(closest-side,rgba(59,130,246,.5),transparent)
+ *   d     light radial-gradient(closest-side,rgba(124,58,237,.14),transparent)
+ *   d     dark  radial-gradient(closest-side,rgba(236,72,153,.18),transparent)
+ *
+ * Gel overlay (`body::after`, now the `.dsg-gel` canvas — a pseudo-element
+ * cannot host a canvas; geometry, blend mode and animations are unchanged):
+ *
+ *   light radial-gradient(900px 700px at 86% -4%,rgba(124,58,237,.22),transparent 58%)
+ *   light radial-gradient(800px 600px at 4% 10%,rgba(34,211,238,.2),transparent 60%)
+ *   light radial-gradient(900px 700px at 50% 116%,rgba(236,72,153,.14),transparent 62%)
+ *   dark  radial-gradient(900px 700px at 86% -4%,rgba(34,211,238,.26),transparent 58%)
+ *   dark  radial-gradient(800px 600px at 4% 10%,rgba(168,85,247,.24),transparent 60%)
+ *   dark  radial-gradient(900px 700px at 50% 116%,rgba(59,130,246,.2),transparent 62%)
+ */
+:root body{background:none!important}
+.dsg-aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.dsg-auroraBase{position:absolute;inset:0;width:100%;height:100%}
+.dsg-auroraLayer{position:absolute;will-change:transform}
+.dsg-aurora-a{left:calc(99.2vw - 580px);top:calc(-14.4vh - 440.8px);width:1160px;height:881.6px;animation:dsg-drift-a calc(26s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate}
+.dsg-aurora-b{left:calc(-14vw - 522px);top:calc(1.4vh - 406px);width:1044px;height:812px;animation:dsg-drift-b calc(26s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate}
+.dsg-aurora-c{left:calc(52.6vw - 660px);top:calc(137vh - 492px);width:1320px;height:984px;animation:dsg-drift-c calc(26s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate}
+.dsg-aurora-d{left:calc(50vw - 448px);top:calc(46vh - 332.8px);width:896px;height:665.6px;animation:dsg-drift-d calc(26s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate}
+body[data-ds-dark-theme] .dsg-aurora-d{left:calc(47.4vw - 434px);top:calc(48.6vh - 322.4px);width:868px;height:644.8px}
+.dsg-gel{position:fixed;left:-8%;top:-8%;width:116%;height:116%;pointer-events:none;z-index:2147483001;mix-blend-mode:multiply;animation:dsg-cyber-pulse calc(12s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate,dsg-cyber-sway calc(28s * var(--dsg-cycle-scale,1)) ease-in-out infinite alternate}
+body[data-ds-dark-theme] .dsg-gel{mix-blend-mode:screen}
+@keyframes dsg-drift-a{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(-3.9vw,-3vh,0)}100%{transform:translate3d(-1.2vw,-1.2vh,0)}}
+@keyframes dsg-drift-b{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(4.2vw,3vh,0)}100%{transform:translate3d(1.2vw,-1.2vh,0)}}
+@keyframes dsg-drift-c{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(2.4vw,-1.8vh,0)}100%{transform:translate3d(-2.4vw,1.8vh,0)}}
+@keyframes dsg-drift-d{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(-1.5vw,1.2vh,0)}100%{transform:translate3d(1.2vw,-1.2vh,0)}}
 @keyframes dsg-cyber-pulse{0%{opacity:.38}100%{opacity:.72}}
 @keyframes dsg-cyber-sway{0%{transform:translate3d(-1.5%,1%,0) scale(1.03)}100%{transform:translate3d(2.5%,-1.5%,0) scale(1.07)}}
 body[data-ds-dark-theme] h1,body[data-ds-dark-theme] h2{text-shadow:0 0 26px rgba(34,211,238,.32)}

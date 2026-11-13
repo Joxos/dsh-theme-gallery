@@ -19,6 +19,17 @@ export const SOURCE = PACKAGE_ID
 /** Where the selected style is remembered for the next page load. */
 export const STORAGE_KEY = 'dsh.style-gallery.active'
 
+/** Where the motion-cycle multiplier is remembered for the next page load. */
+export const CYCLE_KEY = 'dsh.style-gallery.cycle'
+
+/** Motion-cycle slider bounds: duration multiplier, larger means slower. */
+export const CYCLE_MIN = 0.5
+export const CYCLE_MAX = 5
+export const CYCLE_STEP = 0.1
+
+/** Default cycle multiplier: twice as slow as the designed pace. */
+export const CYCLE_DEFAULT = 2
+
 /** Id that means "no plugin layer"; the host theme stays untouched. */
 export const NATIVE_ID = 'native'
 

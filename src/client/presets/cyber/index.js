@@ -6,6 +6,8 @@ export const cyber = {
   id: 'cyber',
   nameKey: 'style.cyber.name',
   descKey: 'style.cyber.desc',
+  /** Offers a motion-cycle slider on its gallery card. */
+  cycle: true,
   tokens,
   structural: style,
 }

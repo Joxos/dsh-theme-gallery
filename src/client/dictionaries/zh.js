@@ -9,8 +9,8 @@ export default {
   "page.footnote": "风格会应用到所有面板、对话框和输入区；选择只保存在这台设备的浏览器中。",
   "chip.active": "使用中",
   "a11y.applied": "当前风格：{name}",
-  "style.pixel.name": "像素街机",
-  "style.pixel.desc": "零圆角、等宽字体与高对比配色，像一台 8 位街机。",
+  "card.cycleLabel": "动效周期",
+  "card.cycleValue": "{value}×",
   "style.cyber.name": "极光絮语",
-  "style.cyber.desc": "极光在夜色与玻璃之间缓慢流动，安静、深邃，像一场没有声音的极光。"
+  "style.cyber.desc": "极光在夜色与玻璃之间缓慢流动，安静、深邃，从不停歇。"
 }

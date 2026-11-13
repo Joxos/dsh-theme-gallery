@@ -9,8 +9,8 @@ export default {
   "page.footnote": "Styles cover every panel, dialog and the composer. The choice is saved in this browser only.",
   "chip.active": "Active",
   "a11y.applied": "Current style: {name}",
-  "style.pixel.name": "Pixel Arcade",
-  "style.pixel.desc": "Zero radius, monospace type and high-contrast color, like an 8-bit arcade.",
+  "card.cycleLabel": "Motion cycle",
+  "card.cycleValue": "{value}×",
   "style.cyber.name": "Aurora Whispers",
   "style.cyber.desc": "Aurora light drifts through glass and night — quiet, deep, and always in motion."
 }
