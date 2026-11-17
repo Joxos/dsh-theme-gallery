@@ -2,9 +2,24 @@
 :root,body{--dsw-font-family:"Bahnschrift","DIN Alternate","Segoe UI Variable Display","Segoe UI",-apple-system,BlinkMacSystemFont,sans-serif!important}
 :root,body,body *{--dsw-elevation-panel:0 0 0 1px rgba(34,211,238,.28),0 20px 60px -14px rgba(34,211,238,.38);--dsw-elevation-prominent:0 0 0 1px rgba(34,211,238,.36),0 30px 80px -16px rgba(34,211,238,.5);--dsw-elevation-soft:0 12px 40px -12px rgba(34,211,238,.32);--dsw-elevation-stroke:0 0 0 1px rgba(34,211,238,.24)}
 body *{--dsw-shadow-lv3:0 0 0 1px rgba(34,211,238,.3),0 24px 60px -20px rgba(34,211,238,.42)!important}
-[class*="_card_38jqx"]{--dsw-hovercard-bg:#fbf9ff!important}
-body[data-ds-dark-theme] [class*="_card_38jqx"]{--dsw-hovercard-bg:#0d1222!important}
-[class*="_preview_38jqx"]{background:var(--dsw-specific-input-major)!important}
+/*
+ * The HoverCard preview variant (changed-file previews and long references) is
+ * a reading surface, not glass: it paints the translucent layer-1 background,
+ * so its text sits over the aurora. It takes the composer's opaque input
+ * surface instead. The card carries this inline custom property, which
+ * survives the CSS-module hash changes between DSH builds; the previous
+ * `_preview_38jqx` selector broke when the hash changed.
+ */
+div[style*="--dsh-hover-preview-fade"]{background:var(--dsw-specific-input-major)!important}
+/*
+ * Settings is a control surface, not scenery. The shared settings panel ships
+ * with the translucent layer-2 background, so the drifting aurora and the page
+ * behind it read through the form; it takes the composer's opaque input
+ * surface (the same token the input box uses) in both color schemes. The
+ * panel's `data-shortcut-modal` marker is its stable hook; the CSS-module
+ * class name is hashed.
+ */
+[data-shortcut-modal="settings"]{background:var(--dsw-specific-input-major)!important}
 :root,body{--dsw-menu-backdrop-filter:blur(28px) saturate(170%)}
 /*
  * Aurora background, canvas-sprite edition.

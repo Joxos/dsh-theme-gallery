@@ -255,6 +255,14 @@ assert.equal(cyber.layers.length, 1, 'the saved cyber style must install one tok
 assert.equal(cyber.layers[0].source, pkg.name)
 assert.ok('--dsw-alias-bg-base' in cyber.layers[0].tokens, 'the cyber layer must carry color tokens')
 assert.ok(cyber.tags[0].textContent.includes('dsg-aurora'), 'the cyber structural rules must be installed')
+assert.ok(
+  cyber.tags[0].textContent.includes('[data-shortcut-modal="settings"]'),
+  'the cyber rules must give the settings panel the opaque input surface',
+)
+assert.ok(
+  cyber.tags[0].textContent.includes('--dsh-hover-preview-fade'),
+  'the cyber rules must give the hover preview the opaque input surface',
+)
 assert.ok(cyber.tags[0].textContent.includes('dsg-drift-a'), 'the composited aurora drift must be installed')
 assert.ok(cyber.tags[0].textContent.includes('dsg-gel'), 'the gel overlay rules must be installed')
 assert.equal(cyber.body.children.length, 2, 'the cyber style must mount the aurora stack and the gel overlay')

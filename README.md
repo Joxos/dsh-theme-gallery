@@ -7,7 +7,7 @@ animation slower or faster.
 
 | id | 中文 | English | Signature |
 | --- | --- | --- | --- |
-| `cyber` | 极光絮语 | Aurora Whispers | near-transparent glass, opaque composer, drifting aurora, large flowing aurora blobs, adjustable motion cycle |
+| `cyber` | 极光絮语 | Aurora Whispers | near-transparent glass, opaque composer, settings panel and hover previews, drifting aurora, large flowing aurora blobs, adjustable motion cycle |
 
 `Use native` (恢复原生) removes the active layer and returns to the shipped
 theme untouched.
@@ -70,11 +70,15 @@ and the effect-preservation gate.
   stretched to its CSS box), so the visuals are the historical CSS rasters
   while ambient textures stay tiny (see **Performance**). Translucent panel
   tokens, slow drift and a pointer-events-none FX overlay of flowing aurora
-  blobs complete the surface. The gallery card carries a motion-cycle slider
-  that scales every ambient animation duration (`--dsg-cycle-scale`, saved in
-  `localStorage`), so the drift can be slowed down or sped up to taste. The
-  style is CSS-driven for geometry and motion, scoped to the active style, and
-  removed with that style.
+  blobs complete the surface. Settings is a control surface rather than
+  scenery: the shared settings panel takes the composer's opaque input surface
+  (`--dsw-specific-input-major`) instead of the translucent layer token, so
+  the aurora never reads through the form. Hover previews (changed files and
+  long references) take the same surface, so their text never sits over the
+  aurora. The gallery card carries a motion-cycle slider that scales every
+  ambient animation duration (`--dsg-cycle-scale`, saved in `localStorage`), so
+  the drift can be slowed down or sped up to taste. The style is CSS-driven for
+  geometry and motion, scoped to the active style, and removed with that style.
 * **Persistence** — the selected id is kept in `localStorage` under
   `dsh.style-gallery.active`. The client half is `immediately: true`, so a page
   reload restores the style before the gallery is opened again.
