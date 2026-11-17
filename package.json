@@ -1,6 +1,6 @@
 {
   "name": "@joxos/dsh-theme-gallery",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "DeepSeek Harness bundle that adds a sidebar visual-style gallery with the Aurora Whispers theme and an adjustable motion cycle.",
   "keywords": [
     "dsh",
