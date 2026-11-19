@@ -256,12 +256,24 @@ assert.equal(cyber.layers[0].source, pkg.name)
 assert.ok('--dsw-alias-bg-base' in cyber.layers[0].tokens, 'the cyber layer must carry color tokens')
 assert.ok(cyber.tags[0].textContent.includes('dsg-aurora'), 'the cyber structural rules must be installed')
 assert.ok(
-  cyber.tags[0].textContent.includes('[data-shortcut-modal="settings"]'),
-  'the cyber rules must give the settings panel the opaque input surface',
+  cyber.tags[0].textContent.includes('body>:not(#root)'),
+  'the cyber rules must make every portalled popup opaque by default',
 )
 assert.ok(
-  cyber.tags[0].textContent.includes('--dsh-hover-preview-fade'),
-  'the cyber rules must give the hover preview the opaque input surface',
+  cyber.tags[0].textContent.includes('[role="dialog"]'),
+  'the popup default must also cover inline dialog surfaces',
+)
+assert.ok(
+  cyber.tags[0].textContent.includes('--dsw-alias-bg-layer-2:var(--dsw-specific-input-major)'),
+  'the popup default must bind the card surface to the opaque input surface',
+)
+assert.ok(
+  !cyber.tags[0].textContent.includes('[data-shortcut-modal="settings"]'),
+  'the popup default must not need a per-component settings selector',
+)
+assert.ok(
+  !cyber.tags[0].textContent.includes('div[style*="--dsh-hover-preview-fade"]'),
+  'the popup default must not need a per-component preview selector',
 )
 assert.ok(cyber.tags[0].textContent.includes('dsg-drift-a'), 'the composited aurora drift must be installed')
 assert.ok(cyber.tags[0].textContent.includes('dsg-gel'), 'the gel overlay rules must be installed')

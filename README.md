@@ -7,7 +7,7 @@ animation slower or faster.
 
 | id | 中文 | English | Signature |
 | --- | --- | --- | --- |
-| `cyber` | 极光絮语 | Aurora Whispers | near-transparent glass, opaque composer, settings panel and hover previews, drifting aurora, large flowing aurora blobs, adjustable motion cycle |
+| `cyber` | 极光絮语 | Aurora Whispers | near-transparent glass, opaque composer and popups (dialogs, menus, previews, settings), drifting aurora, large flowing aurora blobs, adjustable motion cycle |
 
 `Use native` (恢复原生) removes the active layer and returns to the shipped
 theme untouched.
@@ -68,17 +68,23 @@ and the effect-preservation gate.
   drifted by its own compositor transform. Every gradient is baked once into a
   small `<canvas>` that *is* its compositor texture (capped backing store,
   stretched to its CSS box), so the visuals are the historical CSS rasters
-  while ambient textures stay tiny (see **Performance**). Translucent panel
+  while ambient textures stay tiny (see **Performance**). Translucent shell
   tokens, slow drift and a pointer-events-none FX overlay of flowing aurora
-  blobs complete the surface. Settings is a control surface rather than
-  scenery: the shared settings panel takes the composer's opaque input surface
-  (`--dsw-specific-input-major`) instead of the translucent layer token, so
-  the aurora never reads through the form. Hover previews (changed files and
-  long references) take the same surface, so their text never sits over the
-  aurora. The gallery card carries a motion-cycle slider that scales every
-  ambient animation duration (`--dsg-cycle-scale`, saved in `localStorage`), so
-  the drift can be slowed down or sped up to taste. The style is CSS-driven for
-  geometry and motion, scoped to the active style, and removed with that style.
+  blobs complete the surface. Surfaces split by role: the page shell keeps the
+  glass, while every popup is opaque by default — modal dialogs (including the
+  Full access and Auto review risk gates), menus, anchored popovers, hover
+  previews and the settings panel all take the composer's opaque
+  `--dsw-specific-input-major` surface. DSH portals the floating layer beside
+  `#root`, so one rule rebinds the surface tokens (`--dsw-alias-bg-base`,
+  `--dsw-alias-bg-layer-1/2`, `--dsw-alias-bg-overlay`,
+  `--dsw-menu-surface-fill`, `--dsw-specific-menu`) on the portal roots; inline
+  popups marked `role=dialog|menu|listbox`, `data-shortcut-modal`, or
+  `data-menu-material` get the same binding, so a popup added by a future DSH
+  build needs no new selector. The gallery card carries a motion-cycle slider
+  that scales every ambient animation duration (`--dsg-cycle-scale`, saved in
+  `localStorage`), so the drift can be slowed down or sped up to taste. The
+  style is CSS-driven for geometry and motion, scoped to the active style, and
+  removed with that style.
 * **Persistence** — the selected id is kept in `localStorage` under
   `dsh.style-gallery.active`. The client half is `immediately: true`, so a page
   reload restores the style before the gallery is opened again.
