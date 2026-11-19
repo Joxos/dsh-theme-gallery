@@ -1,4 +1,4 @@
-/*! @joxos/dsh-theme-gallery v1.1.1 | generated from src/client by scripts/build-client.mjs - edit the sources, not this file. */
+/*! @joxos/dsh-theme-gallery v1.1.2 | generated from src/client by scripts/build-client.mjs - edit the sources, not this file. */
 (() => {
   // src/client/constants.js
   var NS = "styleGallery";
